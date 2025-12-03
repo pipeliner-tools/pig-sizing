@@ -343,19 +343,26 @@
             display: none !important;
         }
     }
-    @media (prefers-color-scheme: dark) {
-  /* Fix for Dropdowns/Select inputs in Dark Mode */
-  select, .form-select, .form-control {
-    color: #ffffff !important;
-    background-color: #2b2b2b !important;
-    border-color: #555 !important;
-  }
+    /* Fix for Dropdowns aligned with your Dark Theme variables */
+select, .form-select, .form-control {
+  background-color: var(--card-bg) !important; /* #020617 */
+  color: var(--text-main) !important;          /* #e5e7eb */
+  border: 1px solid var(--border-subtle) !important;
+  
+  /* This ensures the dropdown arrow turns white */
+  color-scheme: dark; 
+}
 
-  /* Fix for the actual options inside the dropdown list */
-  select option {
-    color: #ffffff;
-    background-color: #2b2b2b;
-  }
+/* Focus state: Use the accent color when the user clicks the dropdown */
+select:focus, .form-select:focus {
+  border-color: var(--accent) !important;      /* #22c55e */
+  outline: none;
+}
+
+/* Styling for the actual list of options when opened */
+select option {
+  background-color: var(--bg);                 /* #020617 */
+  color: var(--text-main);                     /* #e5e7eb */
 }
   </style>
 </head>
