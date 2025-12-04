@@ -37,8 +37,8 @@
       background: radial-gradient(circle at top, #111827 0, var(--bg) 55%, #000 100%);
       color: var(--text-main);
       display: flex;
-      flex-direction: column; /* CHANGED: Stacks content vertically */
-      align-items: center;    /* CHANGED: Centers content horizontally */
+      flex-direction: column;
+      align-items: center;
       padding: 1rem;
       transition: background 0.25s ease, color 0.25s ease;
     }
@@ -50,17 +50,17 @@
     .app {
       width: 100%;
       max-width: 1080px;
-      margin: 0 auto; /* CHANGED: Removes vertical centering so it starts at top */
-      flex-grow: 1;   /* CHANGED: Allows app to take up available space */
+      margin: 0 auto;
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center; /* Optionally keeps the content centered vertically if you prefer, or remove to align top */
+      justify-content: center;
     }
 
     header {
       margin-bottom: 1rem;
       text-align: center;
-      position: relative; /* so the toggle can sit top-right inside */
+      position: relative;
       padding-top: 0.2rem;
     }
 
@@ -77,7 +77,6 @@
       margin-top: 0.25rem;
     }
 
-    /* Dark mode icon – inside header, top-right */
     .theme-toggle-wrapper {
       position: absolute;
       top: 0;
@@ -101,7 +100,6 @@
       color: #111827;
     }
     
-    /* Ensure SVG scales with the button font size */
     .toggle-icon-btn svg {
       width: 1.1em;
       height: 1.1em;
@@ -127,6 +125,8 @@
       box-shadow: var(--shadow-soft);
       padding: 0.9rem 0.9rem 1rem;
       transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
     }
 
     .card-title-row {
@@ -204,7 +204,6 @@
 
     select { cursor: pointer; }
 
-    /* OD pills row */
     .pill-row {
       display: flex;
       flex-wrap: wrap;
@@ -246,11 +245,11 @@
       color: #f97373;
     }
 
-    /* Metrics */
     .results-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
       gap: 0.7rem;
+      margin-bottom: 1rem;
     }
 
     @media (min-width: 640px) {
@@ -308,13 +307,63 @@
       box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7) !important;
     }
     
-    /* --- COPYRIGHT SCROLL ANIMATION --- */
+    /* Dropdown Styling */
+    select, .form-select, .form-control {
+      background-color: var(--card-bg) !important;
+      color: var(--text-main) !important;
+      border: 1px solid var(--border-subtle) !important;
+      color-scheme: dark; 
+      border-radius: 50px !important;
+      padding-left: 20px !important;
+      padding-right: 40px !important;
+    }
+
+    select:focus, .form-select:focus {
+      border-color: var(--accent) !important;
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1); 
+    }
+
+    select option {
+      background-color: var(--bg);
+      color: var(--text-main);
+    }
+
+    /* Notes Section Styling */
+    .notes-container {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.8rem;
+      margin-top: auto;
+    }
+
+    .notes-header {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+
+    .notes-list {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--text-subtle);
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+    
+    .notes-list li {
+      margin-bottom: 0.3rem;
+    }
+
+    /* Copyright Scroll */
     #copyright-scroll {
         display: block;
         width: 100%;
         text-align: center;
         padding: 6px 0 10px;
-        margin-top: auto;          /* CHANGED: Pushes footer to the bottom */
+        margin-top: auto;
         font-size: 0.75rem;
         color: #94a3b8;
         font-family: monospace;
@@ -330,48 +379,13 @@
     }
 
     @keyframes scrollText {
-        0% {
-            transform: translateX(0);
-        }
-        100% {
-            transform: translateX(-100%);
-        }
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
     }
 
     @media print {
-        #copyright-scroll {
-            display: none !important;
-        }
+        #copyright-scroll { display: none !important; }
     }
-    /* Fix for Dropdowns: Dark Mode + Pill Shape */
-select, .form-select, .form-control {
-  /* Dark Theme Colors */
-  background-color: var(--card-bg) !important; /* #020617 */
-  color: var(--text-main) !important;          /* #e5e7eb */
-  border: 1px solid var(--border-subtle) !important;
-  
-  /* Tells browser to use a white arrow */
-  color-scheme: dark; 
-
-  /* PILL SHAPE STYLING */
-  border-radius: 50px !important;   /* Creates the pill shape */
-  padding-left: 20px !important;    /* Adds breathing room for text on the left */
-  padding-right: 40px !important;   /* Ensures text doesn't overlap the arrow */
-}
-
-/* Focus State: Accent color border */
-select:focus, .form-select:focus {
-  border-color: var(--accent) !important;
-  outline: none;
-  /* Optional: Adds a faint glow using your accent color */
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1); 
-}
-
-/* Dropdown Menu Items */
-select option {
-  background-color: var(--bg);
-  color: var(--text-main);
-}
   </style>
 </head>
 <body data-theme="dark">
@@ -487,6 +501,7 @@ select option {
             </div>
           </div>
 
+          <!-- Row 2 -->
           <div class="metric">
             <div class="metric-head">
               <span class="metric-title">Foam PIG Diameter</span>
@@ -509,6 +524,7 @@ select option {
             </div>
           </div>
 
+          <!-- Row 3 -->
           <div class="metric">
             <div class="metric-head">
               <span class="metric-title">Gauge Plate Diameter</span>
@@ -530,6 +546,38 @@ select option {
               <span class="unit">mm</span>
             </div>
           </div>
+
+          <!-- Row 4: Passing Capabilities -->
+          <div class="metric">
+            <div class="metric-head">
+              <span class="metric-title">Foam PIG Passage</span>
+              <span class="metric-tag">0.50 of IDmin</span>
+            </div>
+            <div class="metric-value">
+              <span id="passFoam">-</span>
+              <span class="unit">mm</span>
+            </div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-head">
+              <span class="metric-title">Other PIGs Passage</span>
+              <span class="metric-tag">0.85 of IDmin</span>
+            </div>
+            <div class="metric-value">
+              <span id="passOther">-</span>
+              <span class="unit">mm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="notes-container">
+          <div class="notes-header">Notes</div>
+          <ul class="notes-list">
+            <li>Each pig / spare discs should be suitable for pigging of 250 km continuous run.</li>
+            <li>Each magnet pack shall have a lift capacity of minimum 3 kg. Each magnet shall have minimum strength of 800 gauss.</li>
+          </ul>
         </div>
       </section>
     </div>
@@ -658,6 +706,10 @@ select option {
     const gaugeMaxSpan  = document.getElementById("gaugeMax");
     const guideMinSpan  = document.getElementById("guideMin");
     const guideMaxSpan  = document.getElementById("guideMax");
+    
+    // New Pass-through DOM refs
+    const passFoamSpan  = document.getElementById("passFoam");
+    const passOtherSpan = document.getElementById("passOther");
 
     const themeToggle   = document.getElementById("themeToggle");
     const themeIcon     = document.getElementById("themeIcon");
@@ -750,6 +802,8 @@ select option {
       gaugeMaxSpan.textContent = "-";
       guideMinSpan.textContent = "-";
       guideMaxSpan.textContent = "-";
+      passFoamSpan.textContent = "-";
+      passOtherSpan.textContent = "-";
     }
 
     function updateResults() {
@@ -811,6 +865,10 @@ select option {
       // Gauge plate: 0.95 to 0.98 * IDmin
       gaugeMinSpan.textContent = format(0.95 * idMin);
       gaugeMaxSpan.textContent = format(0.98 * idMin);
+
+      // Passing Capabilities
+      passFoamSpan.textContent = format(0.5 * idMin);
+      passOtherSpan.textContent = format(0.85 * idMin);
     }
 
     // --- SVG Strings for Icons (Solves encoding issues) ---
