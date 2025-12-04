@@ -407,11 +407,12 @@
           <span class="card-title">Inputs</span>
         </div>
 
+        <!-- Row 1: Pipe Size & OD -->
         <div class="form-grid two">
           <div class="field">
             <label for="npsSelect">
               Nominal Pipe Size
-              <span class="unit">NPS</span>
+              <span class="unit"></span>
             </label>
             <div class="input-shell">
               <select id="npsSelect"></select>
@@ -435,6 +436,7 @@
           </div>
         </div>
 
+        <!-- Row 2: Wall Thickness -->
         <div class="form-grid two" style="margin-top:0.7rem;">
           <div class="field">
             <label>Minimum Wall Thickness <span class="unit">mm</span></label>
@@ -471,6 +473,26 @@
             <div class="hint warn" id="validationMsg"></div>
           </div>
         </div>
+
+        <!-- Row 3: Calculated ID (Moved from Output) -->
+        <div class="form-grid" style="margin-top:0.7rem; border-top: 1px solid var(--border-subtle); padding-top: 0.7rem;">
+            <div class="field">
+              <label>
+                Inside Diameter
+              </label>
+              <div class="pill-row">
+                <div class="pill">
+                  <span class="pill-value" id="idMinMm">-</span>
+                  <span class="pill-unit">mm (min)</span>
+                </div>
+                <div class="pill">
+                  <span class="pill-value" id="idMaxMm">-</span>
+                  <span class="pill-unit">mm (max)</span>
+                </div>
+              </div>
+            </div>
+        </div>
+
       </section>
 
       <section class="card">
@@ -479,16 +501,6 @@
         </div>
 
         <div class="results-grid">
-          <div class="metric">
-            <div class="metric-head">
-              <span class="metric-title">Inner Diameter</span>
-              <span class="metric-tag">IDmin to IDmax</span>
-            </div>
-            <div class="metric-value">
-              <span id="idMinMm">-</span> to <span id="idMaxMm">-</span>
-              <span class="unit">mm</span>
-            </div>
-          </div>
 
           <div class="metric">
             <div class="metric-head">
@@ -550,8 +562,8 @@
           <!-- Row 4: Passing Capabilities -->
           <div class="metric">
             <div class="metric-head">
-              <span class="metric-title">Foam PIG Passage</span>
-              <span class="metric-tag">0.50 of IDmin</span>
+              <span class="metric-title">Foam PIG Shall Pass Through</span>
+              <span class="metric-tag">50% of IDmin</span>
             </div>
             <div class="metric-value">
               <span id="passFoam">-</span>
@@ -561,8 +573,8 @@
 
           <div class="metric">
             <div class="metric-head">
-              <span class="metric-title">Other PIGs Passage</span>
-              <span class="metric-tag">0.85 of IDmin</span>
+              <span class="metric-title">Other PIGs Shall Pass Through</span>
+              <span class="metric-tag">85% of IDmin</span>
             </div>
             <div class="metric-value">
               <span id="passOther">-</span>
