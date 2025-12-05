@@ -5,46 +5,58 @@
   <title>Cleaning PIG Sizing Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    /* --- CSS VARIABLES & THEME CONFIG --- */
     :root {
-      /* Dark theme defaults */
-      --bg: #020617;
+      /* Dark Theme (Default) */
+      --bg-gradient-start: #111827;
+      --bg-gradient-mid: #020617;
+      --bg-gradient-end: #000000;
       --card-bg: #020617;
-      --accent: #22c55e;
+      --input-bg: rgba(15, 23, 42, 0.95);
+      --border-color: rgba(148, 163, 184, 0.3);
+      --border-color-focus: rgba(55, 65, 81, 0.8);
+      
       --text-main: #e5e7eb;
       --text-subtle: #9ca3af;
-      --border-subtle: rgba(148, 163, 184, 0.3);
-      --radius-lg: 0.8rem;
+      --accent: #22c55e;
+      --accent-glow: rgba(34, 197, 94, 0.1);
+      
       --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.85);
+      --radius-lg: 0.8rem;
+      --radius-pill: 999px;
     }
 
     body[data-theme="light"] {
-      --bg: #f3f4f6;
+      /* Light Theme */
+      --bg-gradient-start: #e5e7eb;
+      --bg-gradient-mid: #f9fafb;
+      --bg-gradient-end: #e5e7eb;
       --card-bg: #ffffff;
-      --accent: #16a34a;
+      --input-bg: #f9fafb;
+      --border-color: rgba(148, 163, 184, 0.5);
+      --border-color-focus: rgba(148, 163, 184, 0.8);
+      
       --text-main: #111827;
       --text-subtle: #6b7280;
-      --border-subtle: rgba(148, 163, 184, 0.5);
+      --accent: #16a34a;
+      
       --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.15);
     }
 
+    /* --- GLOBAL LAYOUT --- */
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: radial-gradient(circle at top, #111827 0, var(--bg) 55%, #000 100%);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, var(--bg-gradient-start) 0, var(--bg-gradient-mid) 55%, var(--bg-gradient-end) 100%);
       color: var(--text-main);
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 1rem;
       transition: background 0.25s ease, color 0.25s ease;
-    }
-
-    body[data-theme="light"] {
-      background: radial-gradient(circle at top, #e5e7eb 0, #f9fafb 55%, #e5e7eb 100%);
     }
 
     .app {
@@ -57,6 +69,7 @@
       justify-content: center;
     }
 
+    /* --- HEADER --- */
     header {
       margin-bottom: 1rem;
       text-align: center;
@@ -89,23 +102,20 @@
       cursor: pointer;
       font-size: 1.2rem;
       line-height: 1;
-      color: #e5e7eb;
+      color: var(--text-main);
       padding: 0.15rem 0.25rem;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    body[data-theme="light"] .toggle-icon-btn {
-      color: #111827;
-    }
-    
     .toggle-icon-btn svg {
       width: 1.1em;
       height: 1.1em;
       stroke-width: 2;
     }
 
+    /* --- MAIN LAYOUT --- */
     .layout {
       display: grid;
       grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.3fr);
@@ -113,25 +123,21 @@
     }
 
     @media (max-width: 840px) {
-      .layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      .layout { grid-template-columns: minmax(0, 1fr); }
     }
 
     .card {
       background: var(--card-bg);
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-color);
       box-shadow: var(--shadow-soft);
-      padding: 0.9rem 0.9rem 1rem;
-      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      padding: 0.9rem;
+      transition: background 0.25s ease, border-color 0.25s ease;
       display: flex;
       flex-direction: column;
     }
 
-    .card-title-row {
-      margin-bottom: 0.6rem;
-    }
+    .card-title-row { margin-bottom: 0.6rem; }
 
     .card-title {
       font-size: 0.8rem;
@@ -140,6 +146,7 @@
       color: var(--text-subtle);
     }
 
+    /* --- FORMS & INPUTS --- */
     .form-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -147,9 +154,7 @@
     }
 
     @media (min-width: 640px) {
-      .form-grid.two {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .form-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     .field {
@@ -174,23 +179,18 @@
       letter-spacing: 0;
     }
 
+    /* Input Shell (Wrapper for Selects/Inputs) */
     .input-shell {
       display: flex;
       align-items: center;
       gap: 0.4rem;
       padding: 0.3rem 0.55rem;
       border-radius: 0.55rem;
-      border: 1px solid rgba(55, 65, 81, 0.8);
-      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-color-focus);
+      background: var(--input-bg);
     }
 
-    body[data-theme="light"] .input-shell {
-      background: #f9fafb;
-      border-color: rgba(148, 163, 184, 0.8);
-    }
-
-    select,
-    input[type="number"] {
+    select, input[type="number"] {
       border: none;
       outline: none;
       width: 100%;
@@ -202,8 +202,25 @@
       appearance: none;
     }
 
-    select { cursor: pointer; }
+    /* Custom Dropdown Styling */
+    select {
+      background-color: var(--card-bg) !important;
+      color: var(--text-main) !important;
+      border: 1px solid var(--border-color) !important;
+      color-scheme: dark; 
+      border-radius: 50px !important;
+      padding-left: 20px !important;
+      padding-right: 40px !important;
+      cursor: pointer;
+    }
 
+    select:focus {
+      border-color: var(--accent) !important;
+      outline: none;
+      box-shadow: 0 0 0 4px var(--accent-glow); 
+    }
+
+    /* --- DISPLAY PILLS (OD & ID) --- */
     .pill-row {
       display: flex;
       flex-wrap: wrap;
@@ -215,36 +232,28 @@
       align-items: center;
       gap: 0.25rem;
       padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      border: 1px solid rgba(55, 65, 81, 0.8);
-      background: rgba(15, 23, 42, 0.95);
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-color-focus);
+      background: var(--input-bg);
       font-size: 0.8rem;
     }
 
-    body[data-theme="light"] .pill {
-      background: #f9fafb;
-      border-color: rgba(148, 163, 184, 0.8);
-    }
+    .pill-value { font-variant-numeric: tabular-nums; }
+    .pill-unit { font-size: 0.75rem; color: var(--text-subtle); }
 
-    .pill-value {
-      font-variant-numeric: tabular-nums;
-    }
-
-    .pill-unit {
-      font-size: 0.75rem;
-      color: var(--text-subtle);
-    }
-
+    /* --- VALIDATION & HINTS --- */
     .hint {
       font-size: 0.7rem;
       color: var(--text-subtle);
       margin-top: 0.15rem;
     }
-
-    .hint.warn {
-      color: #f97373;
+    .hint.warn { color: #f97373; }
+    .invalid {
+      border-color: #f97373 !important;
+      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7) !important;
     }
 
+    /* --- OUTPUT METRICS --- */
     .results-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -253,21 +262,14 @@
     }
 
     @media (min-width: 640px) {
-      .results-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     .metric {
       border-radius: 0.6rem;
-      border: 1px solid rgba(51, 65, 85, 0.8);
-      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-color-focus);
+      background: var(--input-bg);
       padding: 0.6rem 0.65rem;
-    }
-
-    body[data-theme="light"] .metric {
-      background: #f9fafb;
-      border-color: rgba(148, 163, 184, 0.7);
     }
 
     .metric-head {
@@ -302,36 +304,9 @@
       margin-left: 0.25rem;
     }
 
-    .invalid {
-      border-color: #f97373 !important;
-      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7) !important;
-    }
-    
-    /* Dropdown Styling */
-    select, .form-select, .form-control {
-      background-color: var(--card-bg) !important;
-      color: var(--text-main) !important;
-      border: 1px solid var(--border-subtle) !important;
-      color-scheme: dark; 
-      border-radius: 50px !important;
-      padding-left: 20px !important;
-      padding-right: 40px !important;
-    }
-
-    select:focus, .form-select:focus {
-      border-color: var(--accent) !important;
-      outline: none;
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1); 
-    }
-
-    select option {
-      background-color: var(--bg);
-      color: var(--text-main);
-    }
-
-    /* Notes Section Styling */
+    /* --- NOTES SECTION --- */
     .notes-container {
-      border-top: 1px solid var(--border-subtle);
+      border-top: 1px solid var(--border-color);
       padding-top: 0.8rem;
       margin-top: auto;
     }
@@ -352,39 +327,36 @@
       font-size: 0.75rem;
       line-height: 1.4;
     }
-    
-    .notes-list li {
-      margin-bottom: 0.3rem;
-    }
+    .notes-list li { margin-bottom: 0.3rem; }
 
-    /* Copyright Scroll */
+    /* --- COPYRIGHT SCROLL --- */
     #copyright-scroll {
-        display: block;
-        width: 100%;
-        text-align: center;
-        padding: 6px 0 10px;
-        margin-top: auto;
-        font-size: 0.75rem;
-        color: #94a3b8;
-        font-family: monospace;
-        overflow: hidden;
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 6px 0 10px;
+      margin-top: auto;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-family: monospace;
+      overflow: hidden;
     }
 
     #copyright-scroll .copyright-inner {
-        display: inline-block;
-        padding-left: 100%;
-        white-space: nowrap;
-        animation: scrollText 18s linear infinite;
-        opacity: 0.75;
+      display: inline-block;
+      padding-left: 100%;
+      white-space: nowrap;
+      animation: scrollText 18s linear infinite;
+      opacity: 0.75;
     }
 
     @keyframes scrollText {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-100%); }
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
     }
 
     @media print {
-        #copyright-scroll { display: none !important; }
+      #copyright-scroll { display: none !important; }
     }
   </style>
 </head>
@@ -396,23 +368,23 @@
           <span id="themeIcon"></span>
         </button>
       </div>
-
       <h1>Cleaning PIG Sizing Tool</h1>
       <div class="tagline">Consult Pipeline Operator for Finalization</div>
     </header>
 
-    <div class="layout">
+    <main class="layout">
+      <!-- INPUTS CARD -->
       <section class="card">
         <div class="card-title-row">
           <span class="card-title">Inputs</span>
         </div>
 
-        <!-- Row 1: Pipe Size & OD -->
+        <!-- Row 1: NPS & OD -->
         <div class="form-grid two">
           <div class="field">
             <label for="npsSelect">
               Nominal Pipe Size
-              <span class="unit"></span>
+              <span class="unit">NPS</span>
             </label>
             <div class="input-shell">
               <select id="npsSelect"></select>
@@ -420,9 +392,7 @@
           </div>
 
           <div class="field">
-            <label>
-              Outside Diameter
-            </label>
+            <label>Outside Diameter</label>
             <div class="pill-row">
               <div class="pill">
                 <span class="pill-value" id="odMmVal">-</span>
@@ -444,14 +414,7 @@
               <select id="wtMinSelect"></select>
             </div>
             <div class="input-shell" id="wtMinCustomShell" style="display:none;">
-              <input
-                id="wtMinCustom"
-                type="number"
-                min="0"
-                step="0.01"
-                inputmode="decimal"
-                placeholder="Enter minimum wall thickness"
-              />
+              <input id="wtMinCustom" type="number" min="0" step="0.01" placeholder="Enter minimum WT" />
             </div>
           </div>
 
@@ -461,47 +424,38 @@
               <select id="wtMaxSelect"></select>
             </div>
             <div class="input-shell" id="wtMaxCustomShell" style="display:none;">
-              <input
-                id="wtMaxCustom"
-                type="number"
-                min="0"
-                step="0.01"
-                inputmode="decimal"
-                placeholder="Enter maximum wall thickness"
-              />
+              <input id="wtMaxCustom" type="number" min="0" step="0.01" placeholder="Enter maximum WT" />
             </div>
             <div class="hint warn" id="validationMsg"></div>
           </div>
         </div>
 
-        <!-- Row 3: Calculated ID (Moved from Output) -->
-        <div class="form-grid" style="margin-top:0.7rem; border-top: 1px solid var(--border-subtle); padding-top: 0.7rem;">
-            <div class="field">
-              <label>
-                Inside Diameter
-              </label>
-              <div class="pill-row">
-                <div class="pill">
-                  <span class="pill-value" id="idMinMm">-</span>
-                  <span class="pill-unit">mm (min)</span>
-                </div>
-                <div class="pill">
-                  <span class="pill-value" id="idMaxMm">-</span>
-                  <span class="pill-unit">mm (max)</span>
-                </div>
+        <!-- Row 3: Calculated ID (Styled exactly like OD) -->
+        <div class="form-grid" style="margin-top:0.7rem;">
+          <div class="field">
+            <label>Calculated Inside Diameter</label>
+            <div class="pill-row">
+              <div class="pill">
+                <span class="pill-value" id="idMinMm">-</span>
+                <span class="pill-unit">mm (min)</span>
+              </div>
+              <div class="pill">
+                <span class="pill-value" id="idMaxMm">-</span>
+                <span class="pill-unit">mm (max)</span>
               </div>
             </div>
+          </div>
         </div>
-
       </section>
 
+      <!-- RESULTS CARD -->
       <section class="card">
         <div class="card-title-row">
           <span class="card-title">Dimensions of Cleaning Tools (mm)</span>
         </div>
 
         <div class="results-grid">
-
+          <!-- Row 1 -->
           <div class="metric">
             <div class="metric-head">
               <span class="metric-title">PIG Body Length</span>
@@ -559,11 +513,11 @@
             </div>
           </div>
 
-          <!-- Row 4: Passing Capabilities -->
+          <!-- Row 4: Pass Capabilities -->
           <div class="metric">
             <div class="metric-head">
-              <span class="metric-title">Foam PIG Shall Pass Through</span>
-              <span class="metric-tag">50% of IDmin</span>
+              <span class="metric-title">Foam PIG Passage</span>
+              <span class="metric-tag">0.50 of IDmin</span>
             </div>
             <div class="metric-value">
               <span id="passFoam">-</span>
@@ -573,8 +527,8 @@
 
           <div class="metric">
             <div class="metric-head">
-              <span class="metric-title">Other PIGs Shall Pass Through</span>
-              <span class="metric-tag">85% of IDmin</span>
+              <span class="metric-title">Other PIGs Passage</span>
+              <span class="metric-tag">0.85 of IDmin</span>
             </div>
             <div class="metric-value">
               <span id="passOther">-</span>
@@ -583,7 +537,7 @@
           </div>
         </div>
 
-        <!-- Notes Section -->
+        <!-- Notes Footer -->
         <div class="notes-container">
           <div class="notes-header">Notes</div>
           <ul class="notes-list">
@@ -592,11 +546,20 @@
           </ul>
         </div>
       </section>
-    </div>
+    </main>
   </div>
 
+  <footer id="copyright-scroll">
+    <span class="copyright-inner">
+      Designed & Developed by Ramakrishna Mullapudi © 2025
+    </span>
+  </footer>
+
   <script>
-    // Pipe data (NPS -> OD)
+    /**
+     * DATA CONSTANTS
+     * NPS (Nominal Pipe Size) to OD mappings.
+     */
     const NPS_DATA = {
       "4":  { odIn: 4.5,   odMm: 114.3 },
       "5":  { odIn: 5.563, odMm: 141.3 },
@@ -624,123 +587,85 @@
       "48": { odIn: 48.0,  odMm: 1219.0 }
     };
 
-    const inToMm = (inches) => +(inches * 25.4).toFixed(2);
-
-    // Wall thickness lists (inches) by NPS
+    // Standard Wall Thicknesses (Inches)
     const largeWallInches = [
-      0.188, 0.203, 0.219, 0.250, 0.281, 0.312, 0.344,
-      0.375, 0.406, 0.438, 0.469, 0.500, 0.562, 0.594,
-      0.625, 0.688, 0.719, 0.750, 0.812, 0.844, 0.875,
-      0.906, 0.938, 1.000, 1.031, 1.062, 1.125, 1.188,
-      1.219, 1.250, 1.281, 1.312, 1.375, 1.438, 1.500,
-      1.750, 1.969
+      0.188, 0.203, 0.219, 0.250, 0.281, 0.312, 0.344, 0.375, 0.406, 0.438, 0.469, 
+      0.500, 0.562, 0.594, 0.625, 0.688, 0.719, 0.750, 0.812, 0.844, 0.875, 0.906, 
+      0.938, 1.000, 1.031, 1.062, 1.125, 1.188, 1.219, 1.250, 1.281, 1.312, 1.375, 
+      1.438, 1.500, 1.750, 1.969
     ];
 
     const THICKNESS_INCH = {
-      "4": [
-        0.083, 0.109, 0.120, 0.125, 0.141, 0.156, 0.172,
-        0.188, 0.203, 0.219, 0.237, 0.250, 0.281, 0.312,
-        0.337, 0.438, 0.531, 0.674
-      ],
-      "5": [
-        0.083, 0.109, 0.125, 0.134, 0.156, 0.188, 0.219,
-        0.258, 0.281, 0.312, 0.344, 0.375, 0.500, 0.625, 0.750
-      ],
-      "6": [
-        0.083, 0.109, 0.125, 0.134, 0.141, 0.156, 0.172,
-        0.188, 0.203, 0.219, 0.250, 0.280, 0.312, 0.344,
-        0.375, 0.432, 0.500, 0.562, 0.625, 0.719, 0.750,
-        0.864, 0.875
-      ],
-      "8": [
-        0.109, 0.125, 0.148, 0.156, 0.188, 0.203, 0.219,
-        0.250, 0.277, 0.312, 0.322, 0.344, 0.375, 0.406,
-        0.438, 0.500, 0.562, 0.594, 0.625, 0.719, 0.750,
-        0.812, 0.875, 0.906, 1.000, 1.125
-      ],
-      "10": [
-        0.134, 0.156, 0.165, 0.188, 0.203, 0.219,
-        0.250, 0.279, 0.307, 0.344, 0.365, 0.438,
-        0.500, 0.562, 0.594, 0.625, 0.719, 0.812,
-        0.844, 0.875, 0.938, 1.000, 1.125,
-        1.250, 1.375, 1.438
-      ],
-      "12": [
-        0.156, 0.172, 0.180, 0.188, 0.203, 0.219,
-        0.250, 0.281, 0.312, 0.330, 0.344, 0.375,
-        0.406, 0.438, 0.500, 0.562, 0.625, 0.688,
-        0.750, 0.812, 0.844, 0.875, 0.938,
-        1.000, 1.062, 1.125, 1.250, 1.312,
-        1.375, 1.500
-      ],
-      "14": largeWallInches,
-      "16": largeWallInches,
-      "18": largeWallInches,
-      "20": largeWallInches,
-      "22": largeWallInches,
-      "24": largeWallInches,
-      "26": largeWallInches,
-      "28": largeWallInches,
-      "30": largeWallInches,
-      "32": largeWallInches,
-      "34": largeWallInches,
-      "36": largeWallInches,
-      "38": largeWallInches,
-      "40": largeWallInches,
-      "42": largeWallInches,
-      "44": largeWallInches,
-      "46": largeWallInches,
-      "48": largeWallInches
+      "4": [0.083, 0.109, 0.120, 0.125, 0.141, 0.156, 0.172, 0.188, 0.203, 0.219, 0.237, 0.250, 0.281, 0.312, 0.337, 0.438, 0.531, 0.674],
+      "5": [0.083, 0.109, 0.125, 0.134, 0.156, 0.188, 0.219, 0.258, 0.281, 0.312, 0.344, 0.375, 0.500, 0.625, 0.750],
+      "6": [0.083, 0.109, 0.125, 0.134, 0.141, 0.156, 0.172, 0.188, 0.203, 0.219, 0.250, 0.280, 0.312, 0.344, 0.375, 0.432, 0.500, 0.562, 0.625, 0.719, 0.750, 0.864, 0.875],
+      "8": [0.109, 0.125, 0.148, 0.156, 0.188, 0.203, 0.219, 0.250, 0.277, 0.312, 0.322, 0.344, 0.375, 0.406, 0.438, 0.500, 0.562, 0.594, 0.625, 0.719, 0.750, 0.812, 0.875, 0.906, 1.000, 1.125],
+      "10": [0.134, 0.156, 0.165, 0.188, 0.203, 0.219, 0.250, 0.279, 0.307, 0.344, 0.365, 0.438, 0.500, 0.562, 0.594, 0.625, 0.719, 0.812, 0.844, 0.875, 0.938, 1.000, 1.125, 1.250, 1.375, 1.438],
+      "12": [0.156, 0.172, 0.180, 0.188, 0.203, 0.219, 0.250, 0.281, 0.312, 0.330, 0.344, 0.375, 0.406, 0.438, 0.500, 0.562, 0.625, 0.688, 0.750, 0.812, 0.844, 0.875, 0.938, 1.000, 1.062, 1.125, 1.250, 1.312, 1.375, 1.500],
+      "14": largeWallInches, "16": largeWallInches, "18": largeWallInches, "20": largeWallInches,
+      "22": largeWallInches, "24": largeWallInches, "26": largeWallInches, "28": largeWallInches,
+      "30": largeWallInches, "32": largeWallInches, "34": largeWallInches, "36": largeWallInches,
+      "38": largeWallInches, "40": largeWallInches, "42": largeWallInches, "44": largeWallInches,
+      "46": largeWallInches, "48": largeWallInches
     };
 
-    // DOM refs
-    const npsSelect     = document.getElementById("npsSelect");
-    const odMmVal       = document.getElementById("odMmVal");
-    const odInVal       = document.getElementById("odInVal");
+    // SVG Icons
+    const MOON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+    const SUN_SVG  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
 
-    const wtMinSelect   = document.getElementById("wtMinSelect");
-    const wtMaxSelect   = document.getElementById("wtMaxSelect");
-    const wtMinCustom   = document.getElementById("wtMinCustom");
-    const wtMaxCustom   = document.getElementById("wtMaxCustom");
-    const wtMinCustomShell = document.getElementById("wtMinCustomShell");
-    const wtMaxCustomShell = document.getElementById("wtMaxCustomShell");
-    const validationMsg = document.getElementById("validationMsg");
+    /**
+     * DOM ELEMENTS
+     */
+    const els = {
+      npsSelect: document.getElementById("npsSelect"),
+      odMm:      document.getElementById("odMmVal"),
+      odIn:      document.getElementById("odInVal"),
+      wtMinSel:  document.getElementById("wtMinSelect"),
+      wtMaxSel:  document.getElementById("wtMaxSelect"),
+      wtMinCust: document.getElementById("wtMinCustom"),
+      wtMaxCust: document.getElementById("wtMaxCustom"),
+      wtMinCustShell: document.getElementById("wtMinCustomShell"),
+      wtMaxCustShell: document.getElementById("wtMaxCustomShell"),
+      validationMsg:  document.getElementById("validationMsg"),
+      // Outputs
+      idMin:      document.getElementById("idMinMm"),
+      idMax:      document.getElementById("idMaxMm"),
+      pigLenMin:  document.getElementById("pigLenMin"),
+      pigLenMax:  document.getElementById("pigLenMax"),
+      foamMin:    document.getElementById("foamMin"),
+      foamMax:    document.getElementById("foamMax"),
+      sealMin:    document.getElementById("sealMin"),
+      sealMax:    document.getElementById("sealMax"),
+      gaugeMin:   document.getElementById("gaugeMin"),
+      gaugeMax:   document.getElementById("gaugeMax"),
+      guideMin:   document.getElementById("guideMin"),
+      guideMax:   document.getElementById("guideMax"),
+      passFoam:   document.getElementById("passFoam"),
+      passOther:  document.getElementById("passOther"),
+      // Theme
+      themeToggle: document.getElementById("themeToggle"),
+      themeIcon:   document.getElementById("themeIcon")
+    };
 
-    const idMinMmSpan   = document.getElementById("idMinMm");
-    const idMaxMmSpan   = document.getElementById("idMaxMm");
-    const pigLenMinSpan = document.getElementById("pigLenMin");
-    const pigLenMaxSpan = document.getElementById("pigLenMax");
-    const foamMinSpan   = document.getElementById("foamMin");
-    const foamMaxSpan   = document.getElementById("foamMax");
-    const sealMinSpan   = document.getElementById("sealMin");
-    const sealMaxSpan   = document.getElementById("sealMax");
-    const gaugeMinSpan  = document.getElementById("gaugeMin");
-    const gaugeMaxSpan  = document.getElementById("gaugeMax");
-    const guideMinSpan  = document.getElementById("guideMin");
-    const guideMaxSpan  = document.getElementById("guideMax");
-    
-    // New Pass-through DOM refs
-    const passFoamSpan  = document.getElementById("passFoam");
-    const passOtherSpan = document.getElementById("passOther");
+    /**
+     * UTILITIES
+     */
+    const inToMm = (inches) => +(inches * 25.4).toFixed(2);
+    const format = (v) => (!Number.isFinite(v) ? "-" : v.toFixed(1));
 
-    const themeToggle   = document.getElementById("themeToggle");
-    const themeIcon     = document.getElementById("themeIcon");
-
-    function format(v) {
-      if (!Number.isFinite(v)) return "-";
-      return v.toFixed(1);
-    }
-
+    /**
+     * LOGIC & UI UPDATES
+     */
     function populateNps() {
       Object.entries(NPS_DATA)
         .sort((a, b) => Number(a[0]) - Number(b[0]))
         .forEach(([nps, data]) => {
           const opt = document.createElement("option");
           opt.value = nps;
-          opt.textContent = "NPS " + nps + '"';
-          npsSelect.appendChild(opt);
+          opt.textContent = `NPS ${nps}"`;
+          els.npsSelect.appendChild(opt);
         });
-      npsSelect.value = "12";
+      els.npsSelect.value = "12";
       onNpsChange();
     }
 
@@ -749,6 +674,7 @@
       const inches = THICKNESS_INCH[npsKey] || [];
       const mmList = Array.from(new Set(inches.map(inToMm))).sort((a, b) => a - b);
 
+      // Default / Placeholder option
       const placeholder = document.createElement("option");
       placeholder.value = "";
       placeholder.disabled = true;
@@ -756,13 +682,15 @@
       placeholder.textContent = mmList.length ? "Select..." : "Custom only";
       selectEl.appendChild(placeholder);
 
+      // MM options
       mmList.forEach((mm) => {
         const opt = document.createElement("option");
         opt.value = mm.toString();
-        opt.textContent = mm.toFixed(2) + " mm";
+        opt.textContent = `${mm.toFixed(2)} mm`;
         selectEl.appendChild(opt);
       });
 
+      // Custom option
       const customOpt = document.createElement("option");
       customOpt.value = "custom";
       customOpt.textContent = "Custom...";
@@ -770,69 +698,64 @@
     }
 
     function onNpsChange() {
-      const nps = npsSelect.value;
+      const nps = els.npsSelect.value;
       const data = NPS_DATA[nps];
       if (!data) return;
 
-      odMmVal.textContent = data.odMm.toFixed(1);
-      odInVal.textContent = data.odIn.toFixed(3);
+      // Update OD UI
+      els.odMm.textContent = data.odMm.toFixed(1);
+      els.odIn.textContent = data.odIn.toFixed(3);
 
-      populateThickness(wtMinSelect, nps);
-      populateThickness(wtMaxSelect, nps);
+      // Reset WT inputs
+      populateThickness(els.wtMinSel, nps);
+      populateThickness(els.wtMaxSel, nps);
+      
+      els.wtMinCustShell.style.display = "none";
+      els.wtMinCust.value = "";
+      els.wtMaxCustShell.style.display = "none";
+      els.wtMaxCust.value = "";
 
-      wtMinCustomShell.style.display = "none";
-      wtMinCustom.value = "";
-      wtMaxCustomShell.style.display = "none";
-      wtMaxCustom.value = "";
-
-      const od = data.odMm;
-      pigLenMinSpan.textContent = format(od);
-      pigLenMaxSpan.textContent = format(1.5 * od);
-
+      // Update calculations
       updateResults();
     }
 
-    function getThickness(selectEl, customInput) {
+    function getThicknessValue(selectEl, customInput) {
       const val = selectEl.value;
       if (val === "custom") {
         const v = parseFloat(customInput.value);
-        return Number.isFinite(v) && v > 0 ? v : null;
+        return (Number.isFinite(v) && v > 0) ? v : null;
       }
       if (!val) return null;
       const v = parseFloat(val);
-      return Number.isFinite(v) && v > 0 ? v : null;
+      return (Number.isFinite(v) && v > 0) ? v : null;
     }
 
     function clearOutputs() {
-      idMinMmSpan.textContent = "-";
-      idMaxMmSpan.textContent = "-";
-      foamMinSpan.textContent = "-";
-      foamMaxSpan.textContent = "-";
-      sealMinSpan.textContent = "-";
-      sealMaxSpan.textContent = "-";
-      gaugeMinSpan.textContent = "-";
-      gaugeMaxSpan.textContent = "-";
-      guideMinSpan.textContent = "-";
-      guideMaxSpan.textContent = "-";
-      passFoamSpan.textContent = "-";
-      passOtherSpan.textContent = "-";
+      [
+        els.idMin, els.idMax, els.foamMin, els.foamMax, els.sealMin, els.sealMax,
+        els.gaugeMin, els.gaugeMax, els.guideMin, els.guideMax, els.passFoam, els.passOther
+      ].forEach(el => el.textContent = "-");
     }
 
     function updateResults() {
-      const nps = npsSelect.value;
+      const nps = els.npsSelect.value;
       const data = NPS_DATA[nps];
       if (!data) return;
 
       const od = data.odMm;
-      pigLenMinSpan.textContent = format(od);
-      pigLenMaxSpan.textContent = format(1.5 * od);
 
-      const wtMin = getThickness(wtMinSelect, wtMinCustom);
-      const wtMax = getThickness(wtMaxSelect, wtMaxCustom);
+      // 1. Pig Length (Independent of WT)
+      els.pigLenMin.textContent = format(od);
+      els.pigLenMax.textContent = format(1.5 * od);
 
-      validationMsg.textContent = "";
-      wtMaxSelect.classList.remove("invalid");
-      wtMaxCustom.classList.remove("invalid");
+      // 2. Get WT
+      const wtMin = getThicknessValue(els.wtMinSel, els.wtMinCust);
+      const wtMax = getThicknessValue(els.wtMaxSel, els.wtMaxCust);
+
+      // 3. Validation
+      els.validationMsg.textContent = "";
+      els.wtMaxSel.classList.remove("invalid");
+      els.wtMaxCust.classList.remove("invalid");
 
       if (wtMin == null || wtMax == null) {
         clearOutputs();
@@ -840,120 +763,82 @@
       }
 
       if (wtMax < wtMin) {
-        validationMsg.textContent = "Maximum wall thickness must not be less than minimum wall thickness.";
-        if (wtMaxSelect.value === "custom") {
-          wtMaxCustom.classList.add("invalid");
-        } else {
-          wtMaxSelect.classList.add("invalid");
-        }
+        els.validationMsg.textContent = "Max WT cannot be less than Min WT.";
+        (els.wtMaxSel.value === "custom" ? els.wtMaxCust : els.wtMaxSel).classList.add("invalid");
         clearOutputs();
         return;
       }
 
-      if (2 * wtMax >= od || 2 * wtMin >= od) {
-        validationMsg.textContent = "Selected wall thickness is too large for this OD (2 * WT >= OD).";
+      if ((2 * wtMax) >= od || (2 * wtMin) >= od) {
+        els.validationMsg.textContent = "Wall Thickness too large for OD.";
         clearOutputs();
         return;
       }
 
-      const idMax = od - 2 * wtMin; // largest ID
-      const idMin = od - 2 * wtMax; // smallest ID
+      // 4. Calculate IDs
+      const idMax = od - (2 * wtMin);
+      const idMin = od - (2 * wtMax);
 
-      idMaxMmSpan.textContent = format(idMax);
-      idMinMmSpan.textContent = format(idMin);
+      // 5. Render Results
+      els.idMax.textContent = format(idMax);
+      els.idMin.textContent = format(idMin);
 
-      // Foam PIG: 1.05 to 1.10 * IDmax
-      foamMinSpan.textContent = format(1.05 * idMax);
-      foamMaxSpan.textContent = format(1.10 * idMax);
-
-      // Seal discs: 1.02 to 1.05 * IDmax
-      sealMinSpan.textContent = format(1.02 * idMax);
-      sealMaxSpan.textContent = format(1.05 * idMax);
-
-      // Guide discs: 0.98 to 1.00 * IDmax
-      guideMinSpan.textContent = format(0.98 * idMax);
-      guideMaxSpan.textContent = format(idMax);
-
-      // Gauge plate: 0.95 to 0.98 * IDmin
-      gaugeMinSpan.textContent = format(0.95 * idMin);
-      gaugeMaxSpan.textContent = format(0.98 * idMin);
-
-      // Passing Capabilities
-      passFoamSpan.textContent = format(0.5 * idMin);
-      passOtherSpan.textContent = format(0.85 * idMin);
-    }
-
-    // --- SVG Strings for Icons (Solves encoding issues) ---
-    const MOON_SVG = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-      </svg>`;
+      // Tools Dimensions
+      els.foamMin.textContent  = format(1.05 * idMax);
+      els.foamMax.textContent  = format(1.10 * idMax);
       
-    const SUN_SVG = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="23"></line>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-        <line x1="1" y1="12" x2="3" y2="12"></line>
-        <line x1="21" y1="12" x2="23" y2="12"></line>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-      </svg>`;
+      els.sealMin.textContent  = format(1.02 * idMax);
+      els.sealMax.textContent  = format(1.05 * idMax);
+      
+      els.guideMin.textContent = format(0.98 * idMax);
+      els.guideMax.textContent = format(idMax);
+      
+      els.gaugeMin.textContent = format(0.95 * idMin);
+      els.gaugeMax.textContent = format(0.98 * idMin);
 
-    function updateThemeIcon(theme) {
-      if (theme === "dark") {
-        themeIcon.innerHTML = MOON_SVG;
-      } else {
-        themeIcon.innerHTML = SUN_SVG;
-      }
+      // Passage Capabilities
+      els.passFoam.textContent  = format(0.50 * idMin);
+      els.passOther.textContent = format(0.85 * idMin);
     }
 
-    themeToggle.addEventListener("click", () => {
+    function handleWtChange(selectEl, customShell, customInput) {
+      if (selectEl.value === "custom") {
+        customShell.style.display = "block";
+        customInput.focus();
+      } else {
+        customShell.style.display = "none";
+        customInput.value = "";
+      }
+      updateResults();
+    }
+
+    function toggleTheme() {
       const body = document.body;
       const current = body.getAttribute("data-theme") || "dark";
       const next = current === "dark" ? "light" : "dark";
       body.setAttribute("data-theme", next);
-      updateThemeIcon(next);
-    });
+      els.themeIcon.innerHTML = next === "dark" ? MOON_SVG : SUN_SVG;
+    }
 
-    // Events
-    npsSelect.addEventListener("change", onNpsChange);
+    /**
+     * EVENT LISTENERS
+     */
+    els.npsSelect.addEventListener("change", onNpsChange);
+    
+    els.wtMinSel.addEventListener("change", () => handleWtChange(els.wtMinSel, els.wtMinCustShell, els.wtMinCust));
+    els.wtMaxSel.addEventListener("change", () => handleWtChange(els.wtMaxSel, els.wtMaxCustShell, els.wtMaxCust));
+    
+    els.wtMinCust.addEventListener("input", updateResults);
+    els.wtMaxCust.addEventListener("input", updateResults);
+    
+    els.themeToggle.addEventListener("click", toggleTheme);
 
-    wtMinSelect.addEventListener("change", () => {
-      if (wtMinSelect.value === "custom") {
-        wtMinCustomShell.style.display = "block";
-        wtMinCustom.focus();
-      } else {
-        wtMinCustomShell.style.display = "none";
-        wtMinCustom.value = "";
-      }
-      updateResults();
-    });
-
-    wtMaxSelect.addEventListener("change", () => {
-      if (wtMaxSelect.value === "custom") {
-        wtMaxCustomShell.style.display = "block";
-        wtMaxCustom.focus();
-      } else {
-        wtMaxCustomShell.style.display = "none";
-        wtMaxCustom.value = "";
-      }
-      updateResults();
-    });
-
-    wtMinCustom.addEventListener("input", updateResults);
-    wtMaxCustom.addEventListener("input", updateResults);
-
-    // Init
+    /**
+     * INITIALIZATION
+     */
     populateNps();
-    updateThemeIcon(document.body.getAttribute("data-theme") || "dark");
+    els.themeIcon.innerHTML = (document.body.getAttribute("data-theme") || "dark") === "dark" ? MOON_SVG : SUN_SVG;
+
   </script>
-<footer id="copyright-scroll">
-    <span class="copyright-inner">
-        Designed & Developed by Ramakrishna Mullapudi © 2025
-    </span>
-</footer>
 </body>
 </html>
