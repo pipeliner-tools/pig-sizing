@@ -1,844 +1,913 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Cleaning PIG Sizing Tool</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    /* --- CSS VARIABLES & THEME CONFIG --- */
-    :root {
-      /* Dark Theme (Default) */
-      --bg-gradient-start: #111827;
-      --bg-gradient-mid: #020617;
-      --bg-gradient-end: #000000;
-      --card-bg: #020617;
-      --input-bg: rgba(15, 23, 42, 0.95);
-      --border-color: rgba(148, 163, 184, 0.3);
-      --border-color-focus: rgba(55, 65, 81, 0.8);
-      
-      --text-main: #e5e7eb;
-      --text-subtle: #9ca3af;
-      --accent: #22c55e;
-      --accent-glow: rgba(34, 197, 94, 0.1);
-      
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.85);
-      --radius-lg: 0.8rem;
-      --radius-pill: 999px;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cleaning PIG Sizing Tool | Pipeliner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- THEME VARIABLES (Aligned with Portfolio) --- */
+        :root {
+            /* Dark Theme (Default) */
+            --bg-base: #070F15;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(0, 0, 0, 0.2);
+            --input-border: rgba(255, 255, 255, 0.15);
+            --metric-bg: rgba(255, 255, 255, 0.02);
+            
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --accent-teal: #00A5A8; 
+            --accent-orange: #F37021;
+            --danger-text: #f87171;
+            
+            --glow-1: rgba(0, 165, 168, 0.2);
+            --glow-2: rgba(243, 112, 33, 0.15);
+            --grad-base: #FFFFFF;
+            --footer-bg: rgba(7, 15, 21, 0.8);
+        }
 
-    body[data-theme="light"] {
-      /* Light Theme */
-      --bg-gradient-start: #e5e7eb;
-      --bg-gradient-mid: #f9fafb;
-      --bg-gradient-end: #e5e7eb;
-      --card-bg: #ffffff;
-      --input-bg: #f9fafb;
-      --border-color: rgba(148, 163, 184, 0.5);
-      --border-color-focus: rgba(148, 163, 184, 0.8);
-      
-      --text-main: #111827;
-      --text-subtle: #6b7280;
-      --accent: #16a34a;
-      
-      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.15);
-    }
+        [data-theme="light"] {
+            /* Light Theme */
+            --bg-base: #F8FAFC;
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --input-bg: rgba(255, 255, 255, 0.8);
+            --input-border: rgba(0, 0, 0, 0.15);
+            --metric-bg: rgba(255, 255, 255, 0.5);
+            
+            --text-primary: #0F172A;
+            --text-secondary: #475569;
+            --accent-teal: #008082; 
+            --accent-orange: #E05D0F; 
+            --danger-text: #dc2626;
+            
+            --glow-1: rgba(0, 165, 168, 0.15);
+            --glow-2: rgba(243, 112, 33, 0.1);
+            --grad-base: #0F172A;
+            --footer-bg: rgba(248, 250, 252, 0.8);
+        }
 
-    /* --- GLOBAL LAYOUT --- */
-    * { box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, var(--bg-gradient-start) 0, var(--bg-gradient-mid) 55%, var(--bg-gradient-end) 100%);
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 1rem;
-      transition: background 0.25s ease, color 0.25s ease;
-    }
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
 
-    .app {
-      width: 100%;
-      max-width: 1080px;
-      margin: 0 auto;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
 
-    /* --- HEADER --- */
-    header {
-      margin-bottom: 1rem;
-      text-align: center;
-      position: relative;
-      padding-top: 0.2rem;
-    }
+        /* --- THEME TOGGLE --- */
+        .theme-toggle-wrapper {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
 
-    header h1 {
-      margin: 0;
-      font-size: 1.2rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-    }
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+            outline: none;
+        }
 
-    .tagline {
-      font-size: 0.7rem;
-      color: var(--text-subtle);
-      margin-top: 0.25rem;
-    }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+        }
 
-    .theme-toggle-wrapper {
-      position: absolute;
-      top: 0;
-      right: 0;
-    }
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+        }
 
-    .toggle-icon-btn {
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-size: 1.2rem;
-      line-height: 1;
-      color: var(--text-main);
-      padding: 0.15rem 0.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+        .sun-icon { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+        .moon-icon { opacity: 1; transform: rotate(0) scale(1); }
 
-    .toggle-icon-btn svg {
-      width: 1.1em;
-      height: 1.1em;
-      stroke-width: 2;
-    }
+        [data-theme="light"] .sun-icon { opacity: 1; transform: rotate(0) scale(1); }
+        [data-theme="light"] .moon-icon { opacity: 0; transform: rotate(90deg) scale(0.5); }
 
-    /* --- MAIN LAYOUT --- */
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.3fr);
-      gap: 0.9rem;
-    }
+        /* --- AMBIENT GLOWS --- */
+        .ambient-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            pointer-events: none;
+            transition: background 0.5s ease;
+        }
 
-    @media (max-width: 840px) {
-      .layout { grid-template-columns: minmax(0, 1fr); }
-    }
+        .glow-1 {
+            top: -10%; left: -10%;
+            width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--glow-1) 0%, transparent 70%);
+        }
 
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-soft);
-      padding: 0.9rem;
-      transition: background 0.25s ease, border-color 0.25s ease;
-      display: flex;
-      flex-direction: column;
-    }
+        .glow-2 {
+            bottom: 0; right: -10%;
+            width: 40vw; height: 40vw;
+            background: radial-gradient(circle, var(--glow-2) 0%, transparent 70%);
+        }
 
-    .card-title-row { margin-bottom: 0.6rem; }
+        /* --- LAYOUT & HEADER --- */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem 2rem;
+            position: relative;
+            z-index: 1;
+            flex-grow: 1;
+        }
 
-    .card-title {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-subtle);
-    }
+        header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
 
-    /* --- FORMS & INPUTS --- */
-    .form-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0.7rem;
-    }
+        header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, var(--grad-base) 20%, var(--accent-teal) 50%, var(--accent-orange) 80%, var(--grad-base) 100%);
+            background-size: 400% auto;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0, 165, 168, 0.1);
+            animation: textSweep 12s linear infinite;
+        }
 
-    @media (min-width: 640px) {
-      .form-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
+        @keyframes textSweep { to { background-position: 400% center; } }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      font-size: 0.8rem;
-    }
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
 
-    label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: var(--text-subtle);
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.13em;
-    }
+        /* --- GRID & CARDS --- */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 1.5rem;
+        }
 
-    label .unit {
-      text-transform: none;
-      letter-spacing: 0;
-    }
+        @media (max-width: 840px) {
+            .layout-grid { grid-template-columns: 1fr; }
+        }
 
-    /* Input Shell (Wrapper for Selects/Inputs) */
-    .input-shell {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.3rem 0.55rem;
-      border-radius: 0.55rem;
-      border: 1px solid var(--border-color-focus);
-      background: var(--input-bg);
-    }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+        }
 
-    select, input[type="number"] {
-      border: none;
-      outline: none;
-      width: 100%;
-      background: transparent;
-      color: var(--text-main);
-      font-size: 0.85rem;
-      padding: 0.25rem 0.05rem;
-      font-family: inherit;
-      appearance: none;
-    }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--accent-teal), var(--accent-orange));
+            opacity: 0.7;
+        }
 
-    /* Custom Dropdown Styling */
-    select {
-      background-color: var(--card-bg) !important;
-      color: var(--text-main) !important;
-      border: 1px solid var(--border-color) !important;
-      color-scheme: dark; 
-      border-radius: 50px !important;
-      padding-left: 20px !important;
-      padding-right: 40px !important;
-      cursor: pointer;
-    }
+        .card:hover {
+            border-color: rgba(0, 165, 168, 0.3);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+        }
 
-    select:focus {
-      border-color: var(--accent) !important;
-      outline: none;
-      box-shadow: 0 0 0 4px var(--accent-glow); 
-    }
+        [data-theme="dark"] .card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+        }
 
-    /* --- DISPLAY PILLS (OD & ID) --- */
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-teal);
+            margin-bottom: 1.5rem;
+            display: block;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.5rem;
+        }
 
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border-color-focus);
-      background: var(--input-bg);
-      font-size: 0.8rem;
-    }
+        /* --- FORMS & INPUTS --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
 
-    .pill-value { font-variant-numeric: tabular-nums; }
-    .pill-unit { font-size: 0.75rem; color: var(--text-subtle); }
+        @media (min-width: 640px) {
+            .form-grid.two { grid-template-columns: 1fr 1fr; }
+        }
 
-    /* --- VALIDATION & HINTS --- */
-    .hint {
-      font-size: 0.7rem;
-      color: var(--text-subtle);
-      margin-top: 0.15rem;
-    }
-    .hint.warn { color: #f97373; }
-    .invalid {
-      border-color: #f97373 !important;
-      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.7) !important;
-    }
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
 
-    /* --- OUTPUT METRICS --- */
-    .results-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0.7rem;
-      margin-bottom: 1rem;
-    }
+        label {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    @media (min-width: 640px) {
-      .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
+        label .unit { text-transform: none; letter-spacing: 0; font-weight: 400; }
 
-    .metric {
-      border-radius: 0.6rem;
-      border: 1px solid var(--border-color-focus);
-      background: var(--input-bg);
-      padding: 0.6rem 0.65rem;
-    }
+        .input-shell {
+            display: flex;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            transition: all 0.3s ease;
+        }
 
-    .metric-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 0.2rem;
-      gap: 0.4rem;
-    }
+        .input-shell:focus-within {
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 0 3px rgba(0, 165, 168, 0.15);
+        }
 
-    .metric-title {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.11em;
-      color: var(--text-subtle);
-    }
+        select, input[type="number"] {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.4rem 0;
+            outline: none;
+            appearance: none;
+            font-family: inherit;
+        }
 
-    .metric-tag {
-      font-size: 0.68rem;
-      color: var(--text-subtle);
-      text-align: right;
-    }
+        select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right center;
+            padding-right: 1.5rem;
+        }
 
-    .metric-value {
-      font-size: 1.05rem;
-      font-variant-numeric: tabular-nums;
-    }
+        select option {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+        }
 
-    .metric-value .unit {
-      font-size: 0.75rem;
-      color: var(--text-subtle);
-      margin-left: 0.25rem;
-    }
+        .invalid { border-color: var(--danger-text) !important; }
+        .hint.warn { color: var(--danger-text); font-size: 0.75rem; margin-top: 0.2rem; }
 
-    /* --- NOTES SECTION --- */
-    .notes-container {
-      border-top: 1px solid var(--border-color);
-      padding-top: 0.8rem;
-      margin-top: auto;
-    }
+        /* --- PILLS (OD/ID Displays) --- */
+        .pill-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
 
-    .notes-header {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      margin-bottom: 0.4rem;
-      font-weight: 600;
-    }
+        .pill {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 4px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            padding: 0.5rem 0.8rem;
+            border-radius: 50px;
+        }
 
-    .notes-list {
-      margin: 0;
-      padding-left: 1.2rem;
-      color: var(--text-subtle);
-      font-size: 0.75rem;
-      line-height: 1.4;
-    }
-    .notes-list li { margin-bottom: 0.3rem; }
+        .pill-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            font-variant-numeric: tabular-nums;
+        }
 
-    /* --- COPYRIGHT SCROLL --- */
-    #copyright-scroll {
-      display: block;
-      width: 100%;
-      text-align: center;
-      padding: 6px 0 10px;
-      margin-top: auto;
-      font-size: 0.75rem;
-      color: #94a3b8;
-      font-family: monospace;
-      overflow: hidden;
-    }
+        .pill-unit {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
 
-    #copyright-scroll .copyright-inner {
-      display: inline-block;
-      padding-left: 100%;
-      white-space: nowrap;
-      animation: scrollText 18s linear infinite;
-      opacity: 0.75;
-    }
+        /* --- RESULTS METRICS --- */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    @keyframes scrollText {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
+        @media (min-width: 640px) {
+            .results-grid { grid-template-columns: 1fr 1fr; }
+        }
 
-    @media print {
-      #copyright-scroll { display: none !important; }
-    }
-  </style>
+        .metric {
+            background: var(--metric-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .metric-head {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .metric-tag {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-teal);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .metric-value .unit {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        /* --- NOTES --- */
+        .notes-container {
+            border-top: 1px solid var(--card-border);
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+
+        .notes-header {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-orange);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .notes-list {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            padding-left: 1.2rem;
+        }
+        .notes-list li { margin-bottom: 0.4rem; }
+
+        /* --- SCROLLING FOOTER --- */
+        footer {
+            padding: 1.5rem 2rem;
+            background: var(--footer-bg);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            position: relative;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-teal), var(--accent-orange), transparent);
+            animation: footerPulse 6s linear infinite;
+        }
+
+        @keyframes footerPulse { 0% { left: -100%; } 100% { left: 100%; } }
+
+        .scrolling-wrapper {
+            flex-grow: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+        }
+
+        .scrolling-content {
+            display: inline-block;
+            animation: tickerScroll 25s linear infinite;
+        }
+
+        .scrolling-wrapper:hover .scrolling-content { animation-play-state: paused; }
+
+        .scrolling-content span {
+            display: inline-flex;
+            padding-right: 100vw; 
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            background: linear-gradient(to right, var(--text-primary) 20%, var(--accent-teal) 50%, var(--accent-orange) 80%, var(--text-primary) 100%);
+            background-size: 300% auto;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: footerTextSweep 8s linear infinite;
+        }
+
+        @keyframes footerTextSweep { to { background-position: 300% center; } }
+        @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        @media (max-width: 768px) {
+            .theme-toggle-wrapper { top: 1rem; right: 1rem; }
+            header h1 { font-size: 2.2rem; }
+            .container { padding: 4rem 1.5rem 6rem 1.5rem; }
+            footer { padding: 1.5rem 1rem; }
+            .scrolling-content span { font-size: 0.85rem; padding-right: 150vw; }
+        }
+
+        @media print { footer { display: none !important; } }
+    </style>
 </head>
-<body data-theme="dark">
-  <div class="app">
-    <header>
-      <div class="theme-toggle-wrapper">
-        <button id="themeToggle" class="toggle-icon-btn" type="button" aria-label="Toggle Dark Mode">
-          <span id="themeIcon"></span>
+<body>
+
+    <div class="theme-toggle-wrapper">
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
         </button>
-      </div>
-      <h1>Cleaning PIG Sizing Tool</h1>
-      <div class="tagline">Consult Pipeline Operator for Finalization</div>
-    </header>
+    </div>
 
-    <main class="layout">
-      <!-- INPUTS CARD -->
-      <section class="card">
-        <div class="card-title-row">
-          <span class="card-title">Inputs</span>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <main class="container">
+        <header>
+            <h1>Cleaning PIG Sizing</h1>
+            <p class="tagline"> Dimensional tolerances for pipeline cleaning tools</p>
+        </header>
+
+        <div class="layout-grid">
+            
+            <section class="card">
+                <span class="card-title">Pipeline Parameters</span>
+
+                <div class="form-grid two">
+                    <div class="field">
+                        <label for="npsSelect">Nominal Pipe Size</label>
+                        <div class="input-shell">
+                            <select id="npsSelect"></select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Outside Diameter</label>
+                        <div class="pill-row">
+                            <div class="pill">
+                                <span class="pill-value" id="odMmVal">-</span>
+                                <span class="pill-unit">mm</span>
+                            </div>
+                            <div class="pill">
+                                <span class="pill-value" id="odInVal">-</span>
+                                <span class="pill-unit">in</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid two">
+                    <div class="field">
+                        <label>Minimum WT <span class="unit">mm</span></label>
+                        <div class="input-shell">
+                            <select id="wtMinSelect"></select>
+                        </div>
+                        <div class="input-shell" id="wtMinCustomShell" style="display:none; margin-top:0.5rem;">
+                            <input id="wtMinCustom" type="number" min="0" step="0.01" placeholder="Enter custom Min WT" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Maximum WT <span class="unit">mm</span></label>
+                        <div class="input-shell">
+                            <select id="wtMaxSelect"></select>
+                        </div>
+                        <div class="input-shell" id="wtMaxCustomShell" style="display:none; margin-top:0.5rem;">
+                            <input id="wtMaxCustom" type="number" min="0" step="0.01" placeholder="Enter custom Max WT" />
+                        </div>
+                        <div class="hint warn" id="validationMsg"></div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Internal Diameter (ID)</label>
+                        <div class="pill-row">
+                            <div class="pill">
+                                <span class="pill-value" id="idMinMm">-</span>
+                                <span class="pill-unit">mm (min)</span>
+                            </div>
+                            <div class="pill">
+                                <span class="pill-value" id="idMaxMm">-</span>
+                                <span class="pill-unit">mm (max)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <span class="card-title">Calculated Dimensions</span>
+
+                <div class="results-grid">
+                    <div class="metric">
+                        <div class="metric-head">
+                            <span class="metric-title">PIG Body Length</span>
+                            <span class="metric-tag">1.0 to 1.5 × OD</span>
+                        </div>
+                        <div class="metric-value">
+                            <span id="pigLenMin">-</span> to <span id="pigLenMax">-</span> <span class="unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="metric">
+                        <div class="metric-head">
+                            <span class="metric-title">Foam PIG Diameter</span>
+                            <span class="metric-tag">105% to 110% of IDmax</span>
+                        </div>
+                        <div class="metric-value">
+                            <span id="foamMin">-</span> to <span id="foamMax">-</span> <span class="unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="metric">
+                        <div class="metric-head">
+                            <span class="metric-title">Seal Disc Diameter</span>
+                            <span class="metric-tag">102% to 105% of IDmax</span>
+                        </div>
+                        <div class="metric-value">
+                            <span id="sealMin">-</span> to <span id="sealMax">-</span> <span class="unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="metric">
+                        <div class="metric-head">
+                            <span class="metric-title">Gauge Plate Diameter</span>
+                            <span class="metric-tag">95% to 98% of IDmin</span>
+                        </div>
+                        <div class="metric-value">
+                            <span id="gaugeMin">-</span> to <span id="gaugeMax">-</span> <span class="unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="metric">
+                        <div class="metric-head">
+                            <span class="metric-title">Guide Disc Diameter</span>
+                            <span class="metric-tag">98% to 100% of IDmax</span>
+                        </div>
+                        <div class="metric-value">
+                            <span id="guideMin">-</span> to <span id="guideMax">-</span> <span class="unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="metric">
+                        <div class="metric-head">
+                            <span class="metric-title">Foam Pass Through</span>
+                            <span class="metric-tag">50% of IDmin</span>
+                        </div>
+                        <div class="metric-value">
+                            <span id="passFoam">-</span> <span class="unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="metric">
+                        <div class="metric-head">
+                            <span class="metric-title">Other Pass Through</span>
+                            <span class="metric-tag">85% of IDmin</span>
+                        </div>
+                        <div class="metric-value">
+                            <span id="passOther">-</span> <span class="unit">mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notes-container">
+                    <div class="notes-header">Operational Notes</div>
+                    <ul class="notes-list">
+                        <li>Each pig / spare discs should be suitable for continuous run up to 250 km.</li>
+                        <li>Magnetic packs require a minimum 3 kg lift capacity and 800 gauss strength per magnet.</li>
+                    </ul>
+                </div>
+            </section>
+
         </div>
-
-        <!-- Row 1: NPS & OD -->
-        <div class="form-grid two">
-          <div class="field">
-            <label for="npsSelect">
-              Nominal Pipe Size
-              <span class="unit"></span>
-            </label>
-            <div class="input-shell">
-              <select id="npsSelect"></select>
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Outside Diameter</label>
-            <div class="pill-row">
-              <div class="pill">
-                <span class="pill-value" id="odMmVal">-</span>
-                <span class="pill-unit">mm</span>
-              </div>
-              <div class="pill">
-                <span class="pill-value" id="odInVal">-</span>
-                <span class="pill-unit">in</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Row 2: Wall Thickness -->
-        <div class="form-grid two" style="margin-top:0.7rem;">
-          <div class="field">
-            <label>Minimum Wall Thickness <span class="unit">mm</span></label>
-            <div class="input-shell" style="margin-bottom:0.2rem;">
-              <select id="wtMinSelect"></select>
-            </div>
-            <div class="input-shell" id="wtMinCustomShell" style="display:none;">
-              <input id="wtMinCustom" type="number" min="0" step="0.01" placeholder="Enter minimum WT" />
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Maximum Wall Thickness <span class="unit">mm</span></label>
-            <div class="input-shell" style="margin-bottom:0.2rem;">
-              <select id="wtMaxSelect"></select>
-            </div>
-            <div class="input-shell" id="wtMaxCustomShell" style="display:none;">
-              <input id="wtMaxCustom" type="number" min="0" step="0.01" placeholder="Enter maximum WT" />
-            </div>
-            <div class="hint warn" id="validationMsg"></div>
-          </div>
-        </div>
-
-        <!-- Row 3: Calculated ID (Styled exactly like OD) -->
-        <div class="form-grid" style="margin-top:0.7rem;">
-          <div class="field">
-            <label>Inside Diameter</label>
-            <div class="pill-row">
-              <div class="pill">
-                <span class="pill-value" id="idMinMm">-</span>
-                <span class="pill-unit">mm (min)</span>
-              </div>
-              <div class="pill">
-                <span class="pill-value" id="idMaxMm">-</span>
-                <span class="pill-unit">mm (max)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- RESULTS CARD -->
-      <section class="card">
-        <div class="card-title-row">
-          <span class="card-title">Dimensions of Cleaning Tools (mm)</span>
-        </div>
-
-        <div class="results-grid">
-          <!-- Row 1 -->
-          <div class="metric">
-            <div class="metric-head">
-              <span class="metric-title">PIG Body Length</span>
-              <span class="metric-tag">1.0 to 1.5 times OD</span>
-            </div>
-            <div class="metric-value">
-              <span id="pigLenMin">-</span> to <span id="pigLenMax">-</span>
-              <span class="unit">mm</span>
-            </div>
-          </div>
-
-          <!-- Row 2 -->
-          <div class="metric">
-            <div class="metric-head">
-              <span class="metric-title">Foam PIG Diameter</span>
-              <span class="metric-tag">105% to 110% of IDmax</span>
-            </div>
-            <div class="metric-value">
-              <span id="foamMin">-</span> to <span id="foamMax">-</span>
-              <span class="unit">mm</span>
-            </div>
-          </div>
-
-          <div class="metric">
-            <div class="metric-head">
-              <span class="metric-title">Seal Disc Diameter</span>
-              <span class="metric-tag">102% to 105% of IDmax</span>
-            </div>
-            <div class="metric-value">
-              <span id="sealMin">-</span> to <span id="sealMax">-</span>
-              <span class="unit">mm</span>
-            </div>
-          </div>
-
-          <!-- Row 3 -->
-          <div class="metric">
-            <div class="metric-head">
-              <span class="metric-title">Gauge Plate Diameter</span>
-              <span class="metric-tag">95% to 98% of IDmin</span>
-            </div>
-            <div class="metric-value">
-              <span id="gaugeMin">-</span> to <span id="gaugeMax">-</span>
-              <span class="unit">mm</span>
-            </div>
-          </div>
-
-          <div class="metric">
-            <div class="metric-head">
-              <span class="metric-title">Guide Disc Diameter</span>
-              <span class="metric-tag">98% to 100% of IDmax</span>
-            </div>
-            <div class="metric-value">
-              <span id="guideMin">-</span> to <span id="guideMax">-</span>
-              <span class="unit">mm</span>
-            </div>
-          </div>
-
-          <!-- Row 4: Pass Capabilities -->
-          <div class="metric">
-            <div class="metric-head">
-              <span class="metric-title">Foam PIG Shall Pass Through</span>
-              <span class="metric-tag">50% of IDmin</span>
-            </div>
-            <div class="metric-value">
-              <span id="passFoam">-</span>
-              <span class="unit">mm</span>
-            </div>
-          </div>
-
-          <div class="metric">
-            <div class="metric-head">
-              <span class="metric-title">Other PIGs Shall Pass Through</span>
-              <span class="metric-tag">85% of IDmin</span>
-            </div>
-            <div class="metric-value">
-              <span id="passOther">-</span>
-              <span class="unit">mm</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Notes Footer -->
-        <div class="notes-container">
-          <div class="notes-header">Notes</div>
-          <ul class="notes-list">
-            <li>Each pig / spare discs should be suitable for pigging of 250 km continuous run.</li>
-            <li>Each magnet pack shall have a lift capacity of minimum 3 kg. Each magnet shall have minimum strength of 800 gauss.</li>
-          </ul>
-        </div>
-      </section>
     </main>
-  </div>
 
-  <footer id="copyright-scroll">
-    <span class="copyright-inner">
-      Designed & Developed by Ramakrishna Mullapudi © 2025
-    </span>
-  </footer>
+    <footer>
+        <div class="scrolling-wrapper">
+            <div class="scrolling-content">
+                <span>Designed & Developed by Ramakrishna Mullapudi &copy; 2026</span>
+                <span aria-hidden="true">Designed & Developed by Ramakrishna Mullapudi &copy; 2026</span>
+            </div>
+        </div>
+    </footer>
 
-  <script>
-    /**
-     * DATA CONSTANTS
-     * NPS (Nominal Pipe Size) to OD mappings.
-     */
-    const NPS_DATA = {
-      "4":  { odIn: 4.5,   odMm: 114.3 },
-      "5":  { odIn: 5.563, odMm: 141.3 },
-      "6":  { odIn: 6.625, odMm: 168.3 },
-      "8":  { odIn: 8.625, odMm: 219.1 },
-      "10": { odIn: 10.75, odMm: 273.0 },
-      "12": { odIn: 12.75, odMm: 323.9 },
-      "14": { odIn: 14.0,  odMm: 355.6 },
-      "16": { odIn: 16.0,  odMm: 406.4 },
-      "18": { odIn: 18.0,  odMm: 457.2 },
-      "20": { odIn: 20.0,  odMm: 508.0 },
-      "22": { odIn: 22.0,  odMm: 558.8 },
-      "24": { odIn: 24.0,  odMm: 609.6 },
-      "26": { odIn: 26.0,  odMm: 660.4 },
-      "28": { odIn: 28.0,  odMm: 711.2 },
-      "30": { odIn: 30.0,  odMm: 762.0 },
-      "32": { odIn: 32.0,  odMm: 812.8 },
-      "34": { odIn: 34.0,  odMm: 863.6 },
-      "36": { odIn: 36.0,  odMm: 914.4 },
-      "38": { odIn: 38.0,  odMm: 965.2 },
-      "40": { odIn: 40.0,  odMm: 1016.0 },
-      "42": { odIn: 42.0,  odMm: 1067.0 },
-      "44": { odIn: 44.0,  odMm: 1118.0 },
-      "46": { odIn: 46.0,  odMm: 1168.0 },
-      "48": { odIn: 48.0,  odMm: 1219.0 }
-    };
+    <script>
+        // --- THEME INITIALIZATION ---
+        const htmlElement = document.documentElement;
+        const themeToggleBtn = document.getElementById('themeToggle');
 
-    // Standard Wall Thicknesses (Inches)
-    const largeWallInches = [
-      0.188, 0.203, 0.219, 0.250, 0.281, 0.312, 0.344, 0.375, 0.406, 0.438, 0.469, 
-      0.500, 0.562, 0.594, 0.625, 0.688, 0.719, 0.750, 0.812, 0.844, 0.875, 0.906, 
-      0.938, 1.000, 1.031, 1.062, 1.125, 1.188, 1.219, 1.250, 1.281, 1.312, 1.375, 
-      1.438, 1.500, 1.750, 1.969
-    ];
+        const savedTheme = localStorage.getItem('pipelineer-theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    const THICKNESS_INCH = {
-      "4": [0.083, 0.109, 0.120, 0.125, 0.141, 0.156, 0.172, 0.188, 0.203, 0.219, 0.237, 0.250, 0.281, 0.312, 0.337, 0.438, 0.531, 0.674],
-      "5": [0.083, 0.109, 0.125, 0.134, 0.156, 0.188, 0.219, 0.258, 0.281, 0.312, 0.344, 0.375, 0.500, 0.625, 0.750],
-      "6": [0.083, 0.109, 0.125, 0.134, 0.141, 0.156, 0.172, 0.188, 0.203, 0.219, 0.250, 0.280, 0.312, 0.344, 0.375, 0.432, 0.500, 0.562, 0.625, 0.719, 0.750, 0.864, 0.875],
-      "8": [0.109, 0.125, 0.148, 0.156, 0.188, 0.203, 0.219, 0.250, 0.277, 0.312, 0.322, 0.344, 0.375, 0.406, 0.438, 0.500, 0.562, 0.594, 0.625, 0.719, 0.750, 0.812, 0.875, 0.906, 1.000, 1.125],
-      "10": [0.134, 0.156, 0.165, 0.188, 0.203, 0.219, 0.250, 0.279, 0.307, 0.344, 0.365, 0.438, 0.500, 0.562, 0.594, 0.625, 0.719, 0.812, 0.844, 0.875, 0.938, 1.000, 1.125, 1.250, 1.375, 1.438],
-      "12": [0.156, 0.172, 0.180, 0.188, 0.203, 0.219, 0.250, 0.281, 0.312, 0.330, 0.344, 0.375, 0.406, 0.438, 0.500, 0.562, 0.625, 0.688, 0.750, 0.812, 0.844, 0.875, 0.938, 1.000, 1.062, 1.125, 1.250, 1.312, 1.375, 1.500],
-      "14": largeWallInches, "16": largeWallInches, "18": largeWallInches, "20": largeWallInches,
-      "22": largeWallInches, "24": largeWallInches, "26": largeWallInches, "28": largeWallInches,
-      "30": largeWallInches, "32": largeWallInches, "34": largeWallInches, "36": largeWallInches,
-      "38": largeWallInches, "40": largeWallInches, "42": largeWallInches, "44": largeWallInches,
-      "46": largeWallInches, "48": largeWallInches
-    };
+        if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) {
+            htmlElement.setAttribute('data-theme', 'light');
+        } else {
+            htmlElement.setAttribute('data-theme', 'dark');
+        }
 
-    // SVG Icons
-    const MOON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
-    const SUN_SVG  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-
-    /**
-     * DOM ELEMENTS
-     */
-    const els = {
-      npsSelect: document.getElementById("npsSelect"),
-      odMm:      document.getElementById("odMmVal"),
-      odIn:      document.getElementById("odInVal"),
-      wtMinSel:  document.getElementById("wtMinSelect"),
-      wtMaxSel:  document.getElementById("wtMaxSelect"),
-      wtMinCust: document.getElementById("wtMinCustom"),
-      wtMaxCust: document.getElementById("wtMaxCustom"),
-      wtMinCustShell: document.getElementById("wtMinCustomShell"),
-      wtMaxCustShell: document.getElementById("wtMaxCustomShell"),
-      validationMsg:  document.getElementById("validationMsg"),
-      // Outputs
-      idMin:      document.getElementById("idMinMm"),
-      idMax:      document.getElementById("idMaxMm"),
-      pigLenMin:  document.getElementById("pigLenMin"),
-      pigLenMax:  document.getElementById("pigLenMax"),
-      foamMin:    document.getElementById("foamMin"),
-      foamMax:    document.getElementById("foamMax"),
-      sealMin:    document.getElementById("sealMin"),
-      sealMax:    document.getElementById("sealMax"),
-      gaugeMin:   document.getElementById("gaugeMin"),
-      gaugeMax:   document.getElementById("gaugeMax"),
-      guideMin:   document.getElementById("guideMin"),
-      guideMax:   document.getElementById("guideMax"),
-      passFoam:   document.getElementById("passFoam"),
-      passOther:  document.getElementById("passOther"),
-      // Theme
-      themeToggle: document.getElementById("themeToggle"),
-      themeIcon:   document.getElementById("themeIcon")
-    };
-
-    /**
-     * UTILITIES
-     */
-    const inToMm = (inches) => +(inches * 25.4).toFixed(2);
-    const format = (v) => (!Number.isFinite(v) ? "-" : v.toFixed(1));
-
-    /**
-     * LOGIC & UI UPDATES
-     */
-    function populateNps() {
-      Object.entries(NPS_DATA)
-        .sort((a, b) => Number(a[0]) - Number(b[0]))
-        .forEach(([nps, data]) => {
-          const opt = document.createElement("option");
-          opt.value = nps;
-          opt.textContent = `NPS ${nps}"`;
-          els.npsSelect.appendChild(opt);
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('pipelineer-theme', newTheme);
         });
-      els.npsSelect.value = "12";
-      onNpsChange();
-    }
 
-    function populateThickness(selectEl, npsKey) {
-      selectEl.innerHTML = "";
-      const inches = THICKNESS_INCH[npsKey] || [];
-      const mmList = Array.from(new Set(inches.map(inToMm))).sort((a, b) => a - b);
+        // --- CALCULATION LOGIC ---
+        const NPS_DATA = {
+            "4":  { odIn: 4.5,   odMm: 114.3 }, "5":  { odIn: 5.563, odMm: 141.3 }, "6":  { odIn: 6.625, odMm: 168.3 },
+            "8":  { odIn: 8.625, odMm: 219.1 }, "10": { odIn: 10.75, odMm: 273.0 }, "12": { odIn: 12.75, odMm: 323.9 },
+            "14": { odIn: 14.0,  odMm: 355.6 }, "16": { odIn: 16.0,  odMm: 406.4 }, "18": { odIn: 18.0,  odMm: 457.2 },
+            "20": { odIn: 20.0,  odMm: 508.0 }, "22": { odIn: 22.0,  odMm: 558.8 }, "24": { odIn: 24.0,  odMm: 609.6 },
+            "26": { odIn: 26.0,  odMm: 660.4 }, "28": { odIn: 28.0,  odMm: 711.2 }, "30": { odIn: 30.0,  odMm: 762.0 },
+            "32": { odIn: 32.0,  odMm: 812.8 }, "34": { odIn: 34.0,  odMm: 863.6 }, "36": { odIn: 36.0,  odMm: 914.4 },
+            "38": { odIn: 38.0,  odMm: 965.2 }, "40": { odIn: 40.0,  odMm: 1016.0 }, "42": { odIn: 42.0,  odMm: 1067.0 },
+            "44": { odIn: 44.0,  odMm: 1118.0 }, "46": { odIn: 46.0,  odMm: 1168.0 }, "48": { odIn: 48.0,  odMm: 1219.0 }
+        };
 
-      // Default / Placeholder option
-      const placeholder = document.createElement("option");
-      placeholder.value = "";
-      placeholder.disabled = true;
-      placeholder.selected = true;
-      placeholder.textContent = mmList.length ? "Select..." : "Custom only";
-      selectEl.appendChild(placeholder);
+        const largeWallInches = [
+            0.188, 0.203, 0.219, 0.250, 0.281, 0.312, 0.344, 0.375, 0.406, 0.438, 0.469, 0.500, 0.562, 0.594, 0.625, 0.688, 
+            0.719, 0.750, 0.812, 0.844, 0.875, 0.906, 0.938, 1.000, 1.031, 1.062, 1.125, 1.188, 1.219, 1.250, 1.281, 1.312, 
+            1.375, 1.438, 1.500, 1.750, 1.969
+        ];
 
-      // MM options
-      mmList.forEach((mm) => {
-        const opt = document.createElement("option");
-        opt.value = mm.toString();
-        opt.textContent = `${mm.toFixed(2)} mm`;
-        selectEl.appendChild(opt);
-      });
+        const THICKNESS_INCH = {
+            "4": [0.083, 0.109, 0.120, 0.125, 0.141, 0.156, 0.172, 0.188, 0.203, 0.219, 0.237, 0.250, 0.281, 0.312, 0.337, 0.438, 0.531, 0.674],
+            "5": [0.083, 0.109, 0.125, 0.134, 0.156, 0.188, 0.219, 0.258, 0.281, 0.312, 0.344, 0.375, 0.500, 0.625, 0.750],
+            "6": [0.083, 0.109, 0.125, 0.134, 0.141, 0.156, 0.172, 0.188, 0.203, 0.219, 0.250, 0.280, 0.312, 0.344, 0.375, 0.432, 0.500, 0.562, 0.625, 0.719, 0.750, 0.864, 0.875],
+            "8": [0.109, 0.125, 0.148, 0.156, 0.188, 0.203, 0.219, 0.250, 0.277, 0.312, 0.322, 0.344, 0.375, 0.406, 0.438, 0.500, 0.562, 0.594, 0.625, 0.719, 0.750, 0.812, 0.875, 0.906, 1.000, 1.125],
+            "10": [0.134, 0.156, 0.165, 0.188, 0.203, 0.219, 0.250, 0.279, 0.307, 0.344, 0.365, 0.438, 0.500, 0.562, 0.594, 0.625, 0.719, 0.812, 0.844, 0.875, 0.938, 1.000, 1.125, 1.250, 1.375, 1.438],
+            "12": [0.156, 0.172, 0.180, 0.188, 0.203, 0.219, 0.250, 0.281, 0.312, 0.330, 0.344, 0.375, 0.406, 0.438, 0.500, 0.562, 0.625, 0.688, 0.750, 0.812, 0.844, 0.875, 0.938, 1.000, 1.062, 1.125, 1.250, 1.312, 1.375, 1.500],
+            "14": largeWallInches, "16": largeWallInches, "18": largeWallInches, "20": largeWallInches,
+            "22": largeWallInches, "24": largeWallInches, "26": largeWallInches, "28": largeWallInches,
+            "30": largeWallInches, "32": largeWallInches, "34": largeWallInches, "36": largeWallInches,
+            "38": largeWallInches, "40": largeWallInches, "42": largeWallInches, "44": largeWallInches,
+            "46": largeWallInches, "48": largeWallInches
+        };
 
-      // Custom option
-      const customOpt = document.createElement("option");
-      customOpt.value = "custom";
-      customOpt.textContent = "Custom...";
-      selectEl.appendChild(customOpt);
-    }
+        const els = {
+            npsSelect: document.getElementById("npsSelect"),
+            odMm: document.getElementById("odMmVal"),
+            odIn: document.getElementById("odInVal"),
+            wtMinSel: document.getElementById("wtMinSelect"),
+            wtMaxSel: document.getElementById("wtMaxSelect"),
+            wtMinCust: document.getElementById("wtMinCustom"),
+            wtMaxCust: document.getElementById("wtMaxCustom"),
+            wtMinCustShell: document.getElementById("wtMinCustomShell"),
+            wtMaxCustShell: document.getElementById("wtMaxCustomShell"),
+            validationMsg: document.getElementById("validationMsg"),
+            idMin: document.getElementById("idMinMm"),
+            idMax: document.getElementById("idMaxMm"),
+            pigLenMin: document.getElementById("pigLenMin"),
+            pigLenMax: document.getElementById("pigLenMax"),
+            foamMin: document.getElementById("foamMin"),
+            foamMax: document.getElementById("foamMax"),
+            sealMin: document.getElementById("sealMin"),
+            sealMax: document.getElementById("sealMax"),
+            gaugeMin: document.getElementById("gaugeMin"),
+            gaugeMax: document.getElementById("gaugeMax"),
+            guideMin: document.getElementById("guideMin"),
+            guideMax: document.getElementById("guideMax"),
+            passFoam: document.getElementById("passFoam"),
+            passOther: document.getElementById("passOther")
+        };
 
-    function onNpsChange() {
-      const nps = els.npsSelect.value;
-      const data = NPS_DATA[nps];
-      if (!data) return;
+        const inToMm = (inches) => +(inches * 25.4).toFixed(2);
+        const format = (v) => (!Number.isFinite(v) ? "-" : v.toFixed(1));
 
-      // Update OD UI
-      els.odMm.textContent = data.odMm.toFixed(1);
-      els.odIn.textContent = data.odIn.toFixed(3);
+        function populateNps() {
+            Object.entries(NPS_DATA)
+                .sort((a, b) => Number(a[0]) - Number(b[0]))
+                .forEach(([nps]) => {
+                    const opt = document.createElement("option");
+                    opt.value = nps;
+                    opt.textContent = `NPS ${nps}"`;
+                    els.npsSelect.appendChild(opt);
+                });
+            els.npsSelect.value = "12";
+            onNpsChange();
+        }
 
-      // Reset WT inputs
-      populateThickness(els.wtMinSel, nps);
-      populateThickness(els.wtMaxSel, nps);
-      
-      els.wtMinCustShell.style.display = "none";
-      els.wtMinCust.value = "";
-      els.wtMaxCustShell.style.display = "none";
-      els.wtMaxCust.value = "";
+        function populateThickness(selectEl, npsKey) {
+            selectEl.innerHTML = "";
+            const inches = THICKNESS_INCH[npsKey] || [];
+            const mmList = Array.from(new Set(inches.map(inToMm))).sort((a, b) => a - b);
 
-      // Update calculations
-      updateResults();
-    }
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.disabled = true;
+            placeholder.selected = true;
+            placeholder.textContent = mmList.length ? "Select..." : "Custom only";
+            selectEl.appendChild(placeholder);
 
-    function getThicknessValue(selectEl, customInput) {
-      const val = selectEl.value;
-      if (val === "custom") {
-        const v = parseFloat(customInput.value);
-        return (Number.isFinite(v) && v > 0) ? v : null;
-      }
-      if (!val) return null;
-      const v = parseFloat(val);
-      return (Number.isFinite(v) && v > 0) ? v : null;
-    }
+            mmList.forEach((mm) => {
+                const opt = document.createElement("option");
+                opt.value = mm.toString();
+                opt.textContent = `${mm.toFixed(2)} mm`;
+                selectEl.appendChild(opt);
+            });
 
-    function clearOutputs() {
-      [
-        els.idMin, els.idMax, els.foamMin, els.foamMax, els.sealMin, els.sealMax,
-        els.gaugeMin, els.gaugeMax, els.guideMin, els.guideMax, els.passFoam, els.passOther
-      ].forEach(el => el.textContent = "-");
-    }
+            const customOpt = document.createElement("option");
+            customOpt.value = "custom";
+            customOpt.textContent = "Custom...";
+            selectEl.appendChild(customOpt);
+        }
 
-    function updateResults() {
-      const nps = els.npsSelect.value;
-      const data = NPS_DATA[nps];
-      if (!data) return;
+        function onNpsChange() {
+            const nps = els.npsSelect.value;
+            const data = NPS_DATA[nps];
+            if (!data) return;
 
-      const od = data.odMm;
+            els.odMm.textContent = data.odMm.toFixed(1);
+            els.odIn.textContent = data.odIn.toFixed(3);
 
-      // 1. Pig Length (Independent of WT)
-      els.pigLenMin.textContent = format(od);
-      els.pigLenMax.textContent = format(1.5 * od);
+            populateThickness(els.wtMinSel, nps);
+            populateThickness(els.wtMaxSel, nps);
+            
+            els.wtMinCustShell.style.display = "none";
+            els.wtMinCust.value = "";
+            els.wtMaxCustShell.style.display = "none";
+            els.wtMaxCust.value = "";
 
-      // 2. Get WT
-      const wtMin = getThicknessValue(els.wtMinSel, els.wtMinCust);
-      const wtMax = getThicknessValue(els.wtMaxSel, els.wtMaxCust);
+            updateResults();
+        }
 
-      // 3. Validation
-      els.validationMsg.textContent = "";
-      els.wtMaxSel.classList.remove("invalid");
-      els.wtMaxCust.classList.remove("invalid");
+        function getThicknessValue(selectEl, customInput) {
+            const val = selectEl.value;
+            if (val === "custom") {
+                const v = parseFloat(customInput.value);
+                return (Number.isFinite(v) && v > 0) ? v : null;
+            }
+            if (!val) return null;
+            const v = parseFloat(val);
+            return (Number.isFinite(v) && v > 0) ? v : null;
+        }
 
-      if (wtMin == null || wtMax == null) {
-        clearOutputs();
-        return;
-      }
+        function clearOutputs() {
+            [
+                els.idMin, els.idMax, els.foamMin, els.foamMax, els.sealMin, els.sealMax,
+                els.gaugeMin, els.gaugeMax, els.guideMin, els.guideMax, els.passFoam, els.passOther
+            ].forEach(el => el.textContent = "-");
+        }
 
-      if (wtMax < wtMin) {
-        els.validationMsg.textContent = "Max WT cannot be less than Min WT.";
-        (els.wtMaxSel.value === "custom" ? els.wtMaxCust : els.wtMaxSel).classList.add("invalid");
-        clearOutputs();
-        return;
-      }
+        function updateResults() {
+            const nps = els.npsSelect.value;
+            const data = NPS_DATA[nps];
+            if (!data) return;
 
-      if ((2 * wtMax) >= od || (2 * wtMin) >= od) {
-        els.validationMsg.textContent = "Wall Thickness too large for OD.";
-        clearOutputs();
-        return;
-      }
+            const od = data.odMm;
 
-      // 4. Calculate IDs
-      const idMax = od - (2 * wtMin);
-      const idMin = od - (2 * wtMax);
+            els.pigLenMin.textContent = format(od);
+            els.pigLenMax.textContent = format(1.5 * od);
 
-      // 5. Render Results
-      els.idMax.textContent = format(idMax);
-      els.idMin.textContent = format(idMin);
+            const wtMin = getThicknessValue(els.wtMinSel, els.wtMinCust);
+            const wtMax = getThicknessValue(els.wtMaxSel, els.wtMaxCust);
 
-      // Tools Dimensions
-      els.foamMin.textContent  = format(1.05 * idMax);
-      els.foamMax.textContent  = format(1.10 * idMax);
-      
-      els.sealMin.textContent  = format(1.02 * idMax);
-      els.sealMax.textContent  = format(1.05 * idMax);
-      
-      els.guideMin.textContent = format(0.98 * idMax);
-      els.guideMax.textContent = format(idMax);
-      
-      els.gaugeMin.textContent = format(0.95 * idMin);
-      els.gaugeMax.textContent = format(0.98 * idMin);
+            els.validationMsg.textContent = "";
+            els.wtMaxSel.parentElement.classList.remove("invalid");
+            els.wtMaxCustShell.classList.remove("invalid");
 
-      // Passage Capabilities
-      els.passFoam.textContent  = format(0.50 * idMin);
-      els.passOther.textContent = format(0.85 * idMin);
-    }
+            if (wtMin == null || wtMax == null) {
+                clearOutputs();
+                return;
+            }
 
-    function handleWtChange(selectEl, customShell, customInput) {
-      if (selectEl.value === "custom") {
-        customShell.style.display = "block";
-        customInput.focus();
-      } else {
-        customShell.style.display = "none";
-        customInput.value = "";
-      }
-      updateResults();
-    }
+            if (wtMax < wtMin) {
+                els.validationMsg.textContent = "Max WT cannot be less than Min WT.";
+                (els.wtMaxSel.value === "custom" ? els.wtMaxCustShell : els.wtMaxSel.parentElement).classList.add("invalid");
+                clearOutputs();
+                return;
+            }
 
-    function toggleTheme() {
-      const body = document.body;
-      const current = body.getAttribute("data-theme") || "dark";
-      const next = current === "dark" ? "light" : "dark";
-      body.setAttribute("data-theme", next);
-      els.themeIcon.innerHTML = next === "dark" ? MOON_SVG : SUN_SVG;
-    }
+            if ((2 * wtMax) >= od || (2 * wtMin) >= od) {
+                els.validationMsg.textContent = "Wall Thickness too large for OD.";
+                clearOutputs();
+                return;
+            }
 
-    /**
-     * EVENT LISTENERS
-     */
-    els.npsSelect.addEventListener("change", onNpsChange);
-    
-    els.wtMinSel.addEventListener("change", () => handleWtChange(els.wtMinSel, els.wtMinCustShell, els.wtMinCust));
-    els.wtMaxSel.addEventListener("change", () => handleWtChange(els.wtMaxSel, els.wtMaxCustShell, els.wtMaxCust));
-    
-    els.wtMinCust.addEventListener("input", updateResults);
-    els.wtMaxCust.addEventListener("input", updateResults);
-    
-    els.themeToggle.addEventListener("click", toggleTheme);
+            const idMax = od - (2 * wtMin);
+            const idMin = od - (2 * wtMax);
 
-    /**
-     * INITIALIZATION
-     */
-    populateNps();
-    els.themeIcon.innerHTML = (document.body.getAttribute("data-theme") || "dark") === "dark" ? MOON_SVG : SUN_SVG;
+            els.idMax.textContent = format(idMax);
+            els.idMin.textContent = format(idMin);
 
-  </script>
+            els.foamMin.textContent  = format(1.05 * idMax);
+            els.foamMax.textContent  = format(1.10 * idMax);
+            
+            els.sealMin.textContent  = format(1.02 * idMax);
+            els.sealMax.textContent  = format(1.05 * idMax);
+            
+            els.guideMin.textContent = format(0.98 * idMax);
+            els.guideMax.textContent = format(idMax);
+            
+            els.gaugeMin.textContent = format(0.95 * idMin);
+            els.gaugeMax.textContent = format(0.98 * idMin);
+
+            els.passFoam.textContent  = format(0.50 * idMin);
+            els.passOther.textContent = format(0.85 * idMin);
+        }
+
+        function handleWtChange(selectEl, customShell, customInput) {
+            if (selectEl.value === "custom") {
+                customShell.style.display = "flex";
+                customInput.focus();
+            } else {
+                customShell.style.display = "none";
+                customInput.value = "";
+            }
+            updateResults();
+        }
+
+        els.npsSelect.addEventListener("change", onNpsChange);
+        els.wtMinSel.addEventListener("change", () => handleWtChange(els.wtMinSel, els.wtMinCustShell, els.wtMinCust));
+        els.wtMaxSel.addEventListener("change", () => handleWtChange(els.wtMaxSel, els.wtMaxCustShell, els.wtMaxCust));
+        els.wtMinCust.addEventListener("input", updateResults);
+        els.wtMaxCust.addEventListener("input", updateResults);
+
+        populateNps();
+    </script>
 </body>
 </html>
